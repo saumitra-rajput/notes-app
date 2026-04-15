@@ -1,13 +1,65 @@
-version: "3.8"
-
   # this format will also work just make sure you Dockerfile lives in /notes-app
   #services:
   #notes-app:
   #build:
   #context: ./notes-app
 
+# Adding Obervability tools to application
+
+# Prometheus > Cadvisor > Node-exporter > Grafana > Loki > Promtail
 
 services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - notes-app-nw
+    restart: unless-stopped
+      
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    privileged: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - notes-app-nw
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - notes-app-nw
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    networks:
+      - notes-app-nw
+    restart: unless-stopped
+
   notes-app:
     build:
       context: ./application
@@ -53,3 +105,5 @@ networks:
   notes-app-nw:
 volumes:
   my_data:
+  prometheus_data: {}
+  grafana_data: {}
