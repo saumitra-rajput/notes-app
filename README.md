@@ -8,16 +8,16 @@ A full-stack Notes application built with **Django REST Framework** + **React**,
 
 ```
                         ┌──────────────────────────────────┐
-                        │         Kubernetes Cluster        │
-                        │          (Namespace: notes)       │
-                        │                                   │
+                        │         Kubernetes Cluster       │
+                        │          (Namespace: notes)      │
+                        │                                  │
   User ──► Service ───► │  notes-app pods (HPA: 1–5)       │
-           (ClusterIP)  │       ▲  initContainer waits      │
-                        │       │  for MySQL ready           │
-                        │  mysql-service ──► mysql pod       │
-                        │                      │            │
-                        │               PersistentVolume    │
-                        │               (3Gi hostPath)      │
+           (ClusterIP)  │       ▲  initContainer waits     │
+                        │       │  for MySQL ready         │
+                        │  mysql-service ──► mysql pod     │
+                        │                      │           │
+                        │               PersistentVolume   │
+                        │               (3Gi hostPath)     │
                         └──────────────────────────────────┘
 ```
 
@@ -36,7 +36,6 @@ A full-stack Notes application built with **Django REST Framework** + **React**,
 notes-app/
 ├── application/          # Django backend + React frontend source
 │   ├── Dockerfile
-│   ├── Jenkinsfile        # CI/CD pipeline
 │   ├── api/               # Django REST API (models, views, serializers)
 │   ├── mynotes/           # React frontend
 │   ├── notesapp/          # Django project settings
