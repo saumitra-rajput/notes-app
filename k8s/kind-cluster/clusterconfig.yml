@@ -1,0 +1,15 @@
+# This is very first config file for setup our first cluster through the yml
+# Basic structure with the 3 nodes
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+nodes:
+- role: control-plane
+  image: kindest/node:v1.31.0
+
+- role: worker
+  image: kindest/node:v1.31.0
+
+- role: worker
+  image: kindest/node:v1.31.0

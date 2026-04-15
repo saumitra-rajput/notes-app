@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-deployment
+  labels:
+    app: notes-app
+  namespace: notes
+spec:
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: notes-app
+  template:
+    metadata:
+      labels:
+        app: notes-app
+    spec:
+      initContainers:
+        - name: waitfor-mysql
+          image: busybox:1.36
+          command: ["/bin/sh", "-c", "until nc -z mysql-service 3306; do sleep 2; done"]
+          resources:
+            requests:
+              memory: "30Mi"
+              cpu: "30m"
+            limits:
+              memory: "60Mi"
+              cpu: "50m"
+      containers:
+      - name: notes-app
+        image: saumitrarajput/notes-app:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        envFrom:
+          - configMapRef:
+              name: my-configmap
+          - secretRef:
+              name: my-secrets
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000     
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 5
+          
