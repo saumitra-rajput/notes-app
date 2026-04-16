@@ -32,7 +32,7 @@
 #yarn-error.log*
 
 # Build files
-
+application/mynotes/build/
 # application/mynotes/build/
 =========================
 # 🐳 Docker
