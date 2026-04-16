@@ -1,6 +1,13 @@
-# ========================
-# Python / Django
-# ========================
+# =========================
+# 🔐 Secrets / Env
+# =========================
+#.env
+#.env.*
+#*.env
+
+# =========================
+# 🐍 Python / Django
+# =========================
 __pycache__/
 *.py[cod]
 *.pyo
@@ -8,65 +15,79 @@ __pycache__/
 *.sqlite3
 
 # Virtual env
-venv/
-env/
-ENV/
+#venv/
+#env/
+#ENV/
 
 # Django static/media
 #staticfiles/
 #media/
 
-# ========================
-# Environment variables
-# ========================
-#.env
-#.env.*
-#*.env
+# =========================
+# 📦 Node / React (mynotes)
+# =========================
+#node_modules/
+#npm-debug.log*
+#yarn-debug.log*
+#yarn-error.log*
 
-# ========================
-# Logs
-# ========================
-*.log
-
-# ========================
-# Node / React (mynotes)
-# ========================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Build files (React)
+# Build files
 application/mynotes/build/
 
-# ========================
-# OS files
-# ========================
+# =========================
+# 🐳 Docker
+# =========================
+*.tar
+*.gz
+
+# =========================
+# ☁️ Terraform
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*.tfvars
+*.tfvars.json
+
+# =========================
+# 🔑 SSH Keys (CRITICAL)
+# =========================
+*.pem
+*.key
+id_rsa*
+#notesapp
+#notesapp.pub
+
+# =========================
+# ⚙️ Ansible
+# =========================
+#ansible/inventory.ini
+
+# =========================
+# ☸️ Kubernetes (optional)
+# =========================
+# k8s/*.secret.yml
+
+# =========================
+# 🧠 OS / Editor
+# =========================
 .DS_Store
 Thumbs.db
-
-# ========================
-# IDE / Editor
-# ========================
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# ========================
-# Docker
-# ========================
-*.tar
-*.gz
+# =========================
+# 🧾 Logs
+# =========================
+*.log
 
-# ========================
-# Kubernetes (optional)
-# ========================
-# Uncomment if you store secrets locally
-# k8s/*.secret.yml
-
-# ========================
-# Misc
-# ========================
+# =========================
+# 📁 Misc
+# =========================
 *.bak
 *.tmp
