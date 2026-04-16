@@ -26,6 +26,16 @@ spec:
             # envFrom: 
             #    - configMapRef:
             #      name: your-configmap-name
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: MYSQL_PASSWORD
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
