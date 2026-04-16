@@ -1,0 +1,53 @@
+- name: Setup Docker App
+  hosts: notesapp 
+  become: yes
+
+  vars:
+    repo_url: "https://github.com/saumitra-rajput/notes-app.git"  
+    app_dir: "/home/{{ ansible_user }}/app"
+
+  tasks:
+
+    - name: Install required packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+          - git
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    # ⚠️ newgrp doesn't work well in Ansible using this
+    - name: Reset SSH connection to apply group change
+      meta: reset_connection
+
+    - name: Clone repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+
+    - name: Run docker compose
+      command: docker-compose up -d
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Wait for 2 minutes
+      pause:
+        minutes: 2
+
+    - name: Display the runing Containers
+      command: docker ps -a
+      args:
+        chdir: "{{ app_dir }}"
