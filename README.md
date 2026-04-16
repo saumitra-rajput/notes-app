@@ -3,7 +3,7 @@
 A full-stack Notes application built with **Django REST Framework** + **React**, containerized with Docker, and deployed on Kubernetes with autoscaling, persistent storage, and monitoring support.
 
 ---
-
+![alt text](image.png)
 ## 🏗️ Architecture Overview
 
 ```
