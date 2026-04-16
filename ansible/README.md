@@ -51,7 +51,7 @@ inventory.ini
 Verify Ansible can connect to your EC2 instance:
 
 ```bash
-ansible -i inventory.ini dev -m ping
+ansible -i inventory.ini notesapp -m ping
 ```
 
 Expected output:
