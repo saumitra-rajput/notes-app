@@ -23,7 +23,7 @@ variable "ingress_ports" {
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  default     = "t3.micro" # edit here for k8s
+  default     = "c7i-flex.large"  # edit here for k8s
 }
 
 variable "key_name" {
@@ -55,7 +55,6 @@ variable "instances" {
     os_family = string
     instance_type = string
   }))
-
 
 # You can define multiple using the below format
 
