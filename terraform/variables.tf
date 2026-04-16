@@ -24,7 +24,6 @@ variable "instance_type" {
   description = "EC2 instance type"
   type        = string
   default     = "c7i-flex.large"  # edit here for k8s
-}
 
 variable "key_name" {
   description = "SSH key pair name"
