@@ -12,24 +12,34 @@ spec:
       labels:
         app: cadvisor
     spec:
+      automountServiceAccountToken: false   # ✅ FIX (very important)
+
       containers:
         - name: cadvisor
           image: gcr.io/cadvisor/cadvisor:latest
+          securityContext:
+            privileged: true
+
           ports:
             - containerPort: 8080
+
           volumeMounts:
             - name: rootfs
               mountPath: /rootfs
               readOnly: true
+
             - name: var-run
               mountPath: /var/run
-              readOnly: true
+              readOnly: false   # ✅ FIX
+
             - name: sys
               mountPath: /sys
               readOnly: true
-            - name: docker
-              mountPath: /var/lib/docker
+
+            - name: containerd   # ✅ FIX for kind
+              mountPath: /var/lib/containerd
               readOnly: true
+
           resources:
             requests:
               cpu: 100m
@@ -37,19 +47,24 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
+
       volumes:
         - name: rootfs
           hostPath:
             path: /
+
         - name: var-run
           hostPath:
             path: /var/run
+
         - name: sys
           hostPath:
             path: /sys
-        - name: docker
+
+        - name: containerd   # ✅ FIX
           hostPath:
-            path: /var/lib/docker
+            path: /var/lib/containerd
+
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule

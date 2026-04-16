@@ -8,7 +8,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi
+  storageClassName: standard
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -21,6 +22,29 @@ data:
 
     server:
       http_listen_port: 3100
+      grpc_listen_port: 9095
+
+    common:
+      instance_addr: 127.0.0.1
+      path_prefix: /loki
+      storage:
+        filesystem:
+          chunks_directory: /loki/chunks
+          rules_directory: /loki/rules
+      replication_factor: 1
+      ring:
+        kvstore:
+          store: inmemory
+
+    schema_config:
+      configs:
+        - from: 2024-01-01
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
 
     ingester:
       lifecycler:
@@ -30,33 +54,33 @@ data:
           replication_factor: 1
       chunk_idle_period: 5m
       chunk_retain_period: 30s
+      wal:
+        enabled: true
+        dir: /loki/wal
 
-    schema_config:
-      configs:
-        - from: 2024-01-01
-          store: boltdb-shipper
-          object_store: filesystem
-          schema: v11
-          index:
-            prefix: index_
-            period: 24h
-
-    storage_config:
-      boltdb_shipper:
-        active_index_directory: /loki/index
-        cache_location: /loki/cache
-        shared_store: filesystem
-      filesystem:
-        directory: /loki/chunks
+    querier:
+      max_concurrent: 10
 
     limits_config:
-      enforce_metric_name: false
+      max_cache_freshness_per_query: 10m
       reject_old_samples: true
       reject_old_samples_max_age: 168h
+      volume_enabled: true
 
     compactor:
       working_directory: /loki/compactor
-      shared_store: filesystem
+      compaction_interval: 10m
+
+    frontend:
+      max_outstanding_per_tenant: 2048
+      query_stats_enabled: true
+
+    query_range:
+      results_cache:
+        cache:
+          embedded_cache:
+            enabled: true
+            max_size_mb: 100
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -80,6 +104,9 @@ spec:
             - "-config.file=/etc/loki/loki.yaml"
           ports:
             - containerPort: 3100
+              name: http
+            - containerPort: 9095
+              name: grpc
           volumeMounts:
             - name: config
               mountPath: /etc/loki
@@ -92,6 +119,18 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 3100
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3100
+            initialDelaySeconds: 30
+            periodSeconds: 10
       volumes:
         - name: config
           configMap:
@@ -109,6 +148,10 @@ spec:
   selector:
     app: loki
   ports:
-    - port: 3100
+    - name: http
+      port: 3100
       targetPort: 3100
+    - name: grpc
+      port: 9095
+      targetPort: 9095
   type: ClusterIP
