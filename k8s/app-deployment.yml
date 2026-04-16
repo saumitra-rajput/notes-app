@@ -28,7 +28,7 @@ spec:
               cpu: "50m"
       containers:
       - name: notes-app
-        image: saumitrarajput/notes-app:v1
+        image: notesapp:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
