@@ -3,6 +3,9 @@
 ## config metrics server on kind [link](https://github.com/LondheShubham153/kubestarter/tree/main/HPA_VPA)
 
 
+## NOTE please update your commands accordingly like namespaces, services
+
+
 - kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 - kubectl -n kube-system edit deployment metrics-server
   - Add the security bypass to deployment under container.args
@@ -42,7 +45,7 @@ kubectl get hpa -n apache
 ## 3. Port Forward Apache Service (Terminal 1)
 
 ```bash
-kubectl port-forward service/apache-service -n apache 8081:8081 --address=0.0.0.0
+kubectl port-forward service/apache-service -n apache 8000:8000 --address=0.0.0.0
 ```
 
 ---
@@ -51,7 +54,7 @@ kubectl port-forward service/apache-service -n apache 8081:8081 --address=0.0.0.
 
 ```bash
 # Launch interactive BusyBox shell in apache namespace
-kubectl run -i --tty loadstress --image=busybox -n apache -- /bin/sh
+kubectl run -i --tty loadstress --image=busybox -n notes -- /bin/sh
 ```
 
 ---
@@ -71,10 +74,10 @@ while true; do wget -q -O- http://<ClusterIP>:8081 > /dev/null; done
 
 ```bash
 # Watch HPA react to load
-kubectl get hpa -n apache -w
+kubectl get hpa -n notes -w
 
 # Watch pods scale up/down
-kubectl get pods -n apache -w
+kubectl get pods -n notes -w
 ```
 
 ---
